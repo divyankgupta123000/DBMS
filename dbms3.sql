@@ -52,6 +52,13 @@ insert into accident values('16','07-08-09','Whitefield');
 
 select * from accident;
 
-select count(distinct driver_id) CNT from participated,accident where participated.report_num=accident.report_num and acc_date like '%08';
+select count(distinct driver_id) CNT from participated,accident 
+where participated.report_num=accident.report_num and acc_date like '%08';
 
-select count(participated.reg_num) Cont from participated,car,accident where participated.report_num=accident.report_num and car.reg_num=participated.reg_num and model='Audi';
+select count(participated.reg_num) Cont from participated,car,accident 
+where participated.report_num=accident.report_num and car.reg_num=participated.reg_num and model='Audi';
+
+select name_dri from Person 
+where driver_id in(
+Select driver_id from participated 
+where damage_amt>(select avg(damage_amt) from participated));                                            
