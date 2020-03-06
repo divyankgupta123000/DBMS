@@ -48,3 +48,7 @@ insert into Catalog values
 select distinct sid from Catalog,Parts where Catalog.pid=Parts.pid and color='Red' or color='Green'; 
 select distinct Supplier.sid from Supplier,Catalog,Parts where Supplier.sid=Catalog.sid and Catalog.pid=Parts.pid and Parts.color='Red' or Supplier.city='Bangalore';
 select distinct c1.sid,c2.sid from Catalog c1,Catalog c2 where c1.cost>c2.cost and c1.cost!=c2.cost and c1.pid=c2.pid;
+
+select distinct sname from Supplier where sid 
+in(select sid from Catalog where pid in 
+(select pid from Catalog group by (pid) having cost=max(cost)));
