@@ -6,7 +6,7 @@ cust_id int,
 cname varchar(30) not null,
 csex varchar(10) not null,
 cage int not null,
-cphone int not null,
+cphone int not null unique,
 primary key(cust_id));
 
 create table Discount(
