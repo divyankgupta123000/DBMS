@@ -11,6 +11,7 @@ primary key(cust_id));
 
 create table Discount(
 ctype varchar(30),
+validity varchar(20) not null,
 disc_percent int, 
 primary key(ctype));
 
