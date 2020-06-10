@@ -1,77 +1,134 @@
-create database bookDealer;
-use bookDealer;
+create database BooksDB;
+use BooksDB;
+create table Publisher(
+pname varchar(15),
+phone int,
+address varchar(30),
+primary key(pname));
 
-create table author(
-	authorid int,
-    aname varchar(30),
-    city varchar(30),
-    country varchar(30),
-    primary key(authorid)
-);
+create table Book(
+book_id int,
+title varchar(15),
+pub_yr varchar(15),
+pname varchar(15),
+primary key(book_id),
+foreign key (pname) references Publisher(pname));
 
-create table publisher(
-	publisherid int,
-    pname varchar(30),
-    city varchar(30),
-    country varchar(30),
-    primary key(publisherid)
-);
+create table Author(
+aname varchar(15),
+book_id int,
+primary key(book_id,aname),
+foreign key(book_id) references Book(book_id) ON DELETE CASCADE);
 
-create table category(
-	catid int,
-    descr varchar(30),
-    primary key(catid)
-);
+create table Library_Branch(
+branch_id int,
+bname varchar(30),
+address varchar(30),
+primary key(branch_id));
 
-create table catalog(
-	bookid int,
-    title varchar(30),
-    authorid int,
-    publisherid int,
-    catid int,
-    yearP int,
-    price int,
-    primary key(bookid),
-    foreign key(authorid) references author(authorid),
-    foreign key(publisherid) references publisher(publisherid),
-    foreign key(catid) references category(catid)
-);
+create table Book_Copies(
+no_of_copies int,
+book_id int,
+branch_id int,
+primary key(book_id,branch_id),
+foreign key(book_id) references Book(book_id) ON DELETE CASCADE,
+foreign key(branch_id) references Library_Branch(branch_id) ON DELETE CASCADE);
 
-create table orderD(
-	orderno int,
-    bookid int,
-    qty int,
-    primary key(orderno),
-    foreign key(bookid) references catalog(bookid)
-);
+create table Card(
+card_no int,
+primary key(card_no));
 
-insert into author values(1,'shankar','agra','India'),(2,'peter','stockholm','sweden'),(3,'alonso','berlin','germany'),
-(4,'amit','kolkata','India'),(5,'debanjana','ajmer','India');
+create table Book_Lending(
+date_out date,
+due_date date,
+book_id int,
+branch_id int,
+card_no int,
+primary key(book_id,branch_id,card_no),
+foreign key(book_id) references Book(book_id) ON DELETE CASCADE,
+foreign key(branch_id) references Library_Branch(branch_id) ON DELETE CASCADE,
+foreign key(card_no) references Card(card_no) ON DELETE CASCADE);
 
-insert into publisher values(1,'bharat','agra','India'),(2,'govind','patna','India'),(3,'brian','tokyo','china'),
-(4,'joe','jakarta','malaysia'),(5,'aravind','kanyakumari','India');
-
-insert into category values(1,'romance'),(2,'comedy'),(3,'action'),(4,'horror'),(5,'thriller');
-
-insert into catalog values(1,'Uri',5,5,3,2018,1000),(2,'Housefull',4,4,2,2010,500),(3,'Badla',3,3,5,2019,700),
-(4,'ashiqui',2,2,1,2013,300),(5,'stri',1,1,4,2019,600);
-insert into catalog values(6,'Don',1,1,3,2000,750);
-
-insert into orderD values(1,1,2),(2,2,3),(3,3,4),(4,4,5),(5,5,6);
-insert orderD values(6,1,10);
+ALTER TABLE Publisher
+MODIFY COLUMN phone long;
 
 
-select author.aname,author.city,author.country
-from author,catalog
-where author.authorid = catalog.authorid and catalog.yearP > 2000
-group by catalog.authorid having count(catalog.authorid) > 1;
+INSERT INTO PUBLISHER VALUES ('MCGRAW-HILL', 9989076587, 'BANGALORE'); 
+INSERT INTO PUBLISHER VALUES ('PEARSON', 9889076565, 'NEWDELHI'); 
+INSERT INTO PUBLISHER VALUES ('RANDOM HOUSE', 7455679345, 'HYDRABAD'); 
+INSERT INTO PUBLISHER VALUES ('HACHETTE LIVRE', 8970862340, 'CHENAI'); 
+INSERT INTO PUBLISHER VALUES ('GRUPO PLANETA', 7756120238, 'BANGALORE'); 
+ select * from Publisher; 
+ 
 
-select distinct author.aname
-from author,orderD,catalog
-where  catalog.bookid = (select orderD.bookid from orderD where qty = (select max(orderD.qty) from orderD)) and catalog.bookid = orderD.bookid;
+INSERT INTO BOOK VALUES (1,'DBMS','JAN-2017', 'MCGRAW-HILL'); 
+INSERT INTO BOOK VALUES (2,'ADBMS','JUN-2016', 'MCGRAW-HILL'); 
+INSERT INTO BOOK VALUES (3,'CN','SEP-2016', 'PEARSON'); 
+INSERT INTO BOOK VALUES (4,'CG','SEP-2015', 'GRUPO PLANETA'); 
+INSERT INTO BOOK VALUES (5,'OS','MAY-2016', 'PEARSON'); 
 
-use bookdealer;
+INSERT INTO AUTHOR VALUES ('NAVATHE', 1); 
+INSERT INTO AUTHOR VALUES ('NAVATHE', 2); 
+INSERT INTO AUTHOR VALUES ('TANENBAUM', 3); 
+INSERT INTO AUTHOR VALUES ('EDWARD ANGEL', 4); 
+INSERT INTO AUTHOR VALUES ('GALVIN', 5); 
 
-update catalog 
-set catalog.price = price + (price * 0.1)
-where publisherid = 1;
+INSERT INTO LIBRARY_BRANCH VALUES (10,'RR NAGAR','BANGALORE'); 
+INSERT INTO LIBRARY_BRANCH VALUES (11,'RNSIT','BANGALORE'); 
+INSERT INTO LIBRARY_BRANCH VALUES (12,'RAJAJI NAGAR', 'BANGALORE'); 
+INSERT INTO LIBRARY_BRANCH VALUES (13,'NITTE','MANGALORE'); 
+INSERT INTO LIBRARY_BRANCH VALUES (14,'MANIPAL','UDUPI'); 
+
+INSERT INTO BOOK_COPIES VALUES (10, 1, 10); 
+INSERT INTO BOOK_COPIES VALUES (5, 1, 11); 
+INSERT INTO BOOK_COPIES VALUES (2, 2, 12); 
+INSERT INTO BOOK_COPIES VALUES (5, 2, 13); 
+INSERT INTO BOOK_COPIES VALUES (7, 3, 14); 
+INSERT INTO BOOK_COPIES VALUES (1, 5, 10); 
+INSERT INTO BOOK_COPIES VALUES (3, 4, 11); 
+
+INSERT INTO CARD VALUES (100); 
+INSERT INTO CARD VALUES (101); 
+INSERT INTO CARD VALUES (102); 
+INSERT INTO CARD VALUES (103); 
+INSERT INTO CARD VALUES (104);
+
+INSERT INTO BOOK_LENDING VALUES ('2017-01-01','2017-06-01', 1, 10, 101); 
+INSERT INTO BOOK_LENDING VALUES ('2017-01-11','2017-03-11', 3, 14, 101); 
+INSERT INTO BOOK_LENDING VALUES ('2017-02-21','2017-04-21', 2, 13, 101); 
+INSERT INTO BOOK_LENDING VALUES ('2017-03-15','2017-07-15', 4, 11, 101); 
+INSERT INTO BOOK_LENDING VALUES ('2017-04-12','2017-05-12', 1, 11, 104); 
+
+/*1. Retrieve details of all books in the library – id, title, name of publisher, authors, number of copies in each branch, etc. */
+
+SELECT B.BOOK_ID, B.TITLE, B.PNAME, A.ANAME, C.NO_OF_COPIES, L.BRANCH_ID 
+FROM BOOK B, AUTHOR A, BOOK_COPIES C, LIBRARY_BRANCH L 
+WHERE B.BOOK_ID=A.BOOK_ID 
+AND B.BOOK_ID=C.BOOK_ID 
+AND L.BRANCH_ID=C.BRANCH_ID;	
+
+/*2. Get the particulars of borrowers who have borrowed more than 3 books, but from Jan 2017 to Jun 2017. */
+select card_no
+from Book_Lending
+where (month(date_out) between 01 and 06 ) and year(date_out)=2017
+group by card_no
+having count(*)>3;
+
+/* 3.Delete a book in BOOK table. Update the contents of other tables to reflect this data manipulation operation. */
+DELETE FROM BOOK
+WHERE BOOK_ID=3;
+
+/* 4.Partition the BOOK table based on year of publication. Demonstrate its working with a simple query. */
+CREATE VIEW V_PUBLICATION AS 
+SELECT PUB_YR 
+FROM BOOK;
+SELECT * FROM V_PUBLICATION;
+
+/*5. Create a view of all books and its number of copies that are currently available in the Library. */
+CREATE VIEW V_BOOKS AS 
+SELECT B.BOOK_ID, B.TITLE, C.NO_OF_COPIES 
+FROM BOOK B, BOOK_COPIES C, LIBRARY_BRANCH L 
+WHERE B.BOOK_ID=C.BOOK_ID 
+AND C.BRANCH_ID=L.BRANCH_ID;
+
+SELECT * FROM V_BOOKS;
